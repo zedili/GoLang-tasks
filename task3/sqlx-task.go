@@ -28,10 +28,21 @@ type Employees struct {
 	Salary     int    `gorm:"not null"`
 }
 
+type Book struct {
+	Id     uint `gorm:"primaryKey;autoIncrement"`
+	Title  string
+	Author string
+	Price  float64
+}
+
 // 使用gorm 自动迁移表结构，初始化数据
 func sqlxInitTable(db *gorm.DB) {
 	// 自动迁移表格结构
 	if err := db.Debug().AutoMigrate(&Employees{}); err != nil {
+		panic(err)
+	}
+
+	if err := db.Debug().AutoMigrate(&Book{}); err != nil {
 		panic(err)
 	}
 
@@ -54,8 +65,30 @@ func sqlxInitTable(db *gorm.DB) {
 		},
 	}
 
+	books := []Book{
+		{
+			Title:  "张三的书",
+			Author: "张三",
+			Price:  69.8,
+		},
+		{
+			Title:  "李四的书",
+			Author: "李四",
+			Price:  78.5,
+		},
+		{
+			Title:  "王五的书",
+			Author: "王五",
+			Price:  49.5,
+		},
+	}
+
 	if res := db.Debug().CreateInBatches(employees, 2); res.Error != nil {
 		fmt.Println("employee 表数据初始化失败：", res.Error)
+	}
+
+	if res := db.Debug().CreateInBatches(books, 2); res.Error != nil {
+		fmt.Println("book 表数据初始化失败：", res.Error)
 	}
 
 }
@@ -93,3 +126,12 @@ func sqlxQueryEmployee2(db *sqlx.DB) {
 编写Go代码，使用Sqlx执行一个复杂的查询，例如查询价格大于 50 元的书籍，并将结果映射到 Book 结构体切片中，确保类型安全。
 
 **/
+
+func queryBooksOfPriceGrandThan50Yuan(db *sqlx.DB) {
+	var books []Book
+	if err := db.Select(&books, "select id, title, author, price from books where price > ?", 50); err != nil {
+		fmt.Println("查询价格大于50元的书籍失败：", err)
+	} else {
+		fmt.Println("价格大于的50元的书籍：", books)
+	}
+}

@@ -39,10 +39,11 @@ func main() {
 	// sqlxInitTable(gormDb)
 	// sqlxQueryEmployee1(sqlxDb, "技术部")
 	// sqlxQueryEmployee2(sqlxDb)
+	queryBooksOfPriceGrandThan50Yuan(sqlxDb)
 
 	// gorm 进阶
 	// gormAdvanceInitialTable(gormDb)
 	// getPostWithCommentByUserId(gormDb, 1)
-	deleteCommentById(gormDb, 9)
+	// deleteCommentById(gormDb, 9)
 
 }
